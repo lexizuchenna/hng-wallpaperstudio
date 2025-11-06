@@ -1,50 +1,172 @@
-# Welcome to your Expo app 👋
+# Wallpaper Studio — Desktop (Windows)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An elegant wallpaper studio built with **React Native + Expo** and packaged as a native **Windows** app using **Tauri**.  
+Browse, preview, download, and manage wallpapers with a responsive UI that works seamlessly on desktop and adapts to mobile-style interactions.
 
-## Get started
+---
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- **High-quality Wallpapers** — Browse curated wallpaper collections and categories.
+- **Preview & Download** — Preview wallpapers in full-screen and save to your local filesystem.
+- **Set as Desktop Background** — Uses native Tauri APIs to save and optionally trigger OS-level actions.
+- **Favorites & Collections** — Mark wallpapers as favorites and manage local collections.
+- **Responsive UI** — Built with React Native for Web, adapting to both small and large screens.
+- **Native Integration via Tauri** — Access to filesystem, notifications, and optional auto-updates.
+- **Adaptive Theme** — Supports light and dark modes based on system preferences.
+- **Offline-first** — Recently viewed wallpapers are cached for faster access and offline viewing.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## Getting Started
 
-In the output, you'll find options to open the app in a
+Follow these steps to set up, run, and package **Wallpaper Studio** as a Windows desktop application.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites (Windows)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Make sure the following are installed:
 
-## Get a fresh project
+- **Node.js (LTS)**
+- **Rust toolchain (`rustup`)** — ensure both `cargo` and `rustc` are on your PATH
+- **Visual Studio Build Tools** (select _Desktop development with C++_)
+- **Expo CLI (optional)**: `pnpm dlx expo-cli` or use `npx`
+- **pnpm** (recommended package manager)
 
-When you're ready, run:
+Verify Rust and Cargo installation:
 
 ```bash
-npm run reset-project
+rustc --version
+cargo --version
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Installation
 
-## Learn more
+Clone the repository and install dependencies:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+git clone https://github.com/lexizuchenna/hng-wallpaperstudio.git
+cd hng-wallpaperstudio
+pnpm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Development (Web)
 
-## Join the community
+Develop the app using Expo’s web server (React Native for Web):
 
-Join our community of developers creating universal apps.
+# start web dev server
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+pnpm expo start --web
+```
+
+Then open the URL shown in your terminal (typically http://localhost:8081) to preview the app in your browser.
+
+Prepare Web Build for Tauri
+
+Export a static web build that Tauri will use:
+
+```bash
+pnpm expo export --platform web
+```
+
+By default, Expo outputs to dist/ or .expo/output/web.
+Ensure the directory contains an index.html file.
+
+### Add Tauri and Configure
+
+From the project root, initialize Tauri:
+
+```bash
+pnpm create tauri-app@latest
+# or
+pnpm dlx create-tauri-app
+```
+
+When prompted:
+
+Choose “Vanilla” as the frontend type.
+
+Set the directory to src-tauri.
+
+After initialization, edit src-tauri/tauri.conf.json to point to your Expo build:
+
+```json
+{
+  "build": {
+    "beforeBuildCommand": "pnpm expo export --platform web",
+    "beforeDevCommand": "pnpm expo start --web",
+    "distDir": "../dist",
+    "devPath": "http://localhost:19006"
+  },
+  "package": {
+    "productName": "Wallpaper Studio",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "windows": [
+      {
+        "title": "Wallpaper Studio",
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  }
+}
+```
+
+Note: Ensure that "distDir" matches the folder Expo actually outputs to after running the export command.
+
+## Tauri Development & Build
+
+Run the desktop app in development mode (live reload enabled):
+
+pnpm tauri dev
+
+Build the final Windows executable:
+
+pnpm tauri build
+
+The final .exe file will be located in:
+
+src-tauri/target/release/bundle/windows
+
+Example package.json Scripts
+
+```json
+{
+  "scripts": {
+    "start": "expo start",
+    "start:web": "expo start --web",
+    "build:web": "expo export --platform web",
+    "tauri:init": "pnpm create tauri-app@latest",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  }
+}
+```
+
+## Native Capabilities & Notes
+
+- Filesystem: Use @tauri-apps/api/fs to write downloaded wallpapers to user folders.
+
+- Notifications: Use `@tauri-apps/api/notification` to alert users when downloads complete.
+
+- Auto-updates: Configure the Tauri updater for shipping versioned releases.
+
+- Permissions: Some features, like setting the desktop wallpaper, may require OS-level permissions.
+
+- Security: Tauri bundles a minimal Rust core; avoid enabling unneeded APIs for maximum security.
+
+## Recommended Folder Structure
+
+wallpaperstudio/
+├─ app/ # Expo Router (or src/) if using file-based routes
+├─ src/ # Core components and screens
+│ ├─ components/
+│ └─ screens/
+├─ assets/ # Images, icons, fonts
+├─ dist/ # Expo export output (Tauri dist target)
+├─ src-tauri/ # Tauri backend folder
+├─ App.tsx
+├─ package.json
+└─ src-tauri/tauri.conf.json
