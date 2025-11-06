@@ -15,18 +15,17 @@ export default function Category() {
     <View
       style={{
         backgroundColor: COLORS.primaryBg,
-        width: "100%",
-        // marginHorizontal: 20,
         marginTop: SIZES.width > 600 ? 43 : 15,
-
         borderRadius: 16,
         padding: 40,
+        height: 746,
       }}
     >
       <View
         style={{
           flexDirection: SIZES.width > 600 ? "row" : "column-reverse",
           columnGap: 41,
+          marginBottom: 91,
         }}
       >
         <View
@@ -148,15 +147,11 @@ export default function Category() {
           </View>
         </View>
         <Image
-          height={523}
-          width={258}
-          source={require("../assets/images/device.png")}
-          resizeMethod="resize"
+          source={require("../assets/images/device3.png")}
           style={{
-            height: 523,
-            width: 258,
-            resizeMode: "contain",
+            height: 524,
           }}
+          resizeMode="contain"
         />
       </View>
       <View

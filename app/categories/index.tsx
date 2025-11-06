@@ -10,7 +10,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from "react-native";
 import { ListType } from "..";
 import Category from "@/components/Category";
@@ -57,18 +56,18 @@ function HeaderComponent() {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
+        paddingHorizontal: 20,
       }}
     >
       <View
         style={{
-          width: SIZES.width > 600 ? (SIZES.width - 150) / 2 : "100%",
+          width: SIZES.width > 600 ? 611 : "100%",
         }}
       >
         <TouchableOpacity
           style={{
             flexDirection: "row",
             alignItems: "center",
-            //   justifyContent: "center",
             columnGap: 8,
             marginTop: 37,
           }}
@@ -135,17 +134,7 @@ function HeaderComponent() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      {SIZES.width > 600 && (
-        <View
-          style={{
-            width: (SIZES.width - 80) / 2,
-            alignItems: "center",
-            paddingHorizontal: 0,
-          }}
-        >
-          <Category />
-        </View>
-      )}
+      {SIZES.width > 600 && <Category />}
     </View>
   );
 }
@@ -155,13 +144,12 @@ function ListComponent({ image, title, style }: ListType) {
     <ImageBackground
       style={{
         height: 290.71,
-        width: 160,
+        width: 611 / 3,
         borderRadius: 26,
         marginBottom: 23,
         display: "flex",
         justifyContent: "flex-end",
         ...style,
-
         marginRight: 7,
         position: "relative",
       }}
@@ -220,15 +208,9 @@ export default function Categories() {
         ListHeaderComponent={HeaderComponent}
         data={[]}
         keyExtractor={({ title }) => title}
-        renderItem={({ item }) => <ListComponent {...item} />}
+        renderItem={({ item }) => <View />}
         numColumns={numColumns}
         key={numColumns}
-        style={{
-          paddingHorizontal: SIZES.width > 500 ? 40 : 20,
-          columnGap: 20,
-          rowGap: 23,
-          display: "flex",
-        }}
         showsVerticalScrollIndicator={false}
       />
     </>

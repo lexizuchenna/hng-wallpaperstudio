@@ -39,7 +39,7 @@ export default function Header() {
     <View
       style={{
         height: 98,
-        width: SIZES.width,
+        // width: '100%',
         backgroundColor: "#ffffff",
         justifyContent: "space-between",
         flexDirection: "row",
@@ -109,6 +109,7 @@ export default function Header() {
                   pathname === item.to ? "rgba(0,0,0,0.1)" : "transparent",
                 borderWidth: 1,
               }}
+              //@ts-ignore
               href={item.to}
             >
               <Image source={item.icon} width={24} height={24} />
